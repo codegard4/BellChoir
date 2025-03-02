@@ -10,13 +10,12 @@
     <!-- Compile source files -->
     <target name="compile">
         <mkdir dir="${build.dir}"/>
-        <!--        The includeantruntime parameter was from stack overflow: https://stackoverflow.com/questions/5103384/ant-warning-includeantruntime-was-not-set-->
         <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false"/>
     </target>
 
     <!-- Run the program -->
     <target name="run" depends="compile">
-        <java classname="Plant" fork="true">
+        <java classname="Tone" fork="true">
             <classpath>
                 <pathelement location="${build.dir}"/>
             </classpath>

@@ -1,5 +1,9 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -8,6 +12,36 @@ import javax.sound.sampled.SourceDataLine;
 
 public class Tone {
 
+    private Map<String, BellNote> toneMap = Map.ofEntries(
+        entry("A4", new BellNote(Note.A4, NoteLength.QUARTER)),
+        entry("A4S", new BellNote(Note.A4S, NoteLength.QUARTER)),
+        entry("B4", new BellNote(Note.B4, NoteLength.QUARTER)),
+        entry("C4", new BellNote(Note.C4, NoteLength.QUARTER)),
+        entry("C4S", new BellNote(Note.C4S, NoteLength.QUARTER)),
+        entry("D4", new BellNote(Note.D4, NoteLength.QUARTER)),
+        entry("D4S", new BellNote(Note.D4S, NoteLength.QUARTER)),
+        entry("E4", new BellNote(Note.E4, NoteLength.QUARTER)),
+        entry("F4", new BellNote(Note.F4, NoteLength.QUARTER)),
+        entry("F4S", new BellNote(Note.F4S, NoteLength.QUARTER)),
+        entry("G4", new BellNote(Note.G4, NoteLength.QUARTER)),
+        entry("G4S", new BellNote(Note.G4S, NoteLength.QUARTER)),
+        entry("A5", new BellNote(Note.A5, NoteLength.QUARTER))
+        );
+    
+    public List<BellNote> loadSong(String filename){
+        // load the song from a file
+        List<BellNote> song = new ArrayList<BellNote>();
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(new File(filename));
+        } catch (FileNotFoundException ex) {
+        }
+        while(scanner.hasNextLine()){
+            String[] note = scanner.nextLine().split(" ");
+            song.add(new BellNote())
+        }
+        return song;
+    }
     // Mary had a little lamb
     private static final List<BellNote> song = new ArrayList<BellNote>() {{
         add(new BellNote(Note.A5, NoteLength.QUARTER));
