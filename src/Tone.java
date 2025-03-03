@@ -24,7 +24,8 @@ public class Tone {
         Map.entry("F4S", Note.F4S),
         Map.entry("G4", Note.G4),
         Map.entry("G4S", Note.G4S),
-        Map.entry("A5", Note.A5)
+        Map.entry("A5", Note.A5),
+        Map.entry("REST", Note.REST)
         );
 
     private Map<String, NoteLength> lengthMap = Map.ofEntries(
@@ -40,6 +41,7 @@ public class Tone {
         Scanner scanner = new Scanner(new File(filename));
         while(scanner.hasNextLine()){
             String[] note = scanner.nextLine().split(" ");
+            // System.out.println(note[0] + " " + note[1]);
             song.add(new BellNote(toneMap.get(note[0]), lengthMap.get(note[1])));
         }
         scanner.close();
@@ -87,7 +89,7 @@ public class Tone {
         final AudioFormat af =
                 new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
         Tone t = new Tone(af);
-        List<BellNote> song = t.loadSong("songs/MaryHadALittleLamb.txt");
+        List<BellNote> song = t.loadSong("songs/SevenYears.txt");
         t.playSong(song);
     }
 
