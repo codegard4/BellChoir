@@ -10,10 +10,10 @@ public class Member implements Runnable{
     private Thread thread;
     private AudioFormat audioFormat;
 
-    public Member(String name, BellNote note, Thread thread, AudioFormat audioFormat){
+    public Member(String name, BellNote note, AudioFormat audioFormat){
         this.name = name;
         this.note = note;
-        this.thread = thread;
+        this.thread = new Thread(this);
         this.audioFormat = audioFormat;
         thread.start();
     }
@@ -25,9 +25,17 @@ public class Member implements Runnable{
             final int ms = Math.min(note.length.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
             final int length = Note.SAMPLE_RATE * ms / 1000;
             line.write(note.note.sample(), 0, length);
-            line.write(Note.REST.sample(), 0, 50);
+            line.write(Note.REST.sample(), 0, 10);
             line.drain();
         }
+    }
+
+    public void stopBelling(){
+        thread.interrupt();
+    }
+
+    public void joinBells() throws InterruptedException{
+        thread.join();
     }
 /* 
      void playSong(List<BellNote> song) throws LineUnavailableException {
