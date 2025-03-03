@@ -1,10 +1,9 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
@@ -12,77 +11,83 @@ import javax.sound.sampled.SourceDataLine;
 
 public class Tone {
 
-    private Map<String, BellNote> toneMap = Map.ofEntries(
-        entry("A4", new BellNote(Note.A4, NoteLength.QUARTER)),
-        entry("A4S", new BellNote(Note.A4S, NoteLength.QUARTER)),
-        entry("B4", new BellNote(Note.B4, NoteLength.QUARTER)),
-        entry("C4", new BellNote(Note.C4, NoteLength.QUARTER)),
-        entry("C4S", new BellNote(Note.C4S, NoteLength.QUARTER)),
-        entry("D4", new BellNote(Note.D4, NoteLength.QUARTER)),
-        entry("D4S", new BellNote(Note.D4S, NoteLength.QUARTER)),
-        entry("E4", new BellNote(Note.E4, NoteLength.QUARTER)),
-        entry("F4", new BellNote(Note.F4, NoteLength.QUARTER)),
-        entry("F4S", new BellNote(Note.F4S, NoteLength.QUARTER)),
-        entry("G4", new BellNote(Note.G4, NoteLength.QUARTER)),
-        entry("G4S", new BellNote(Note.G4S, NoteLength.QUARTER)),
-        entry("A5", new BellNote(Note.A5, NoteLength.QUARTER))
+    private Map<String, Note> toneMap = Map.ofEntries(
+        Map.entry("A4", Note.A4),
+        Map.entry("A4S", Note.A4S),
+        Map.entry("B4", Note.B4),
+        Map.entry("C4", Note.C4),
+        Map.entry("C4S", Note.C4S),
+        Map.entry("D4", Note.D4),
+        Map.entry("D4S", Note.D4S),
+        Map.entry("E4", Note.E4),
+        Map.entry("F4", Note.F4),
+        Map.entry("F4S", Note.F4S),
+        Map.entry("G4", Note.G4),
+        Map.entry("G4S", Note.G4S),
+        Map.entry("A5", Note.A5)
+        );
+
+    private Map<String, NoteLength> lengthMap = Map.ofEntries(
+        Map.entry("1", NoteLength.WHOLE),
+        Map.entry("2", NoteLength.HALF),
+        Map.entry("4", NoteLength.QUARTER),
+        Map.entry("8", NoteLength.EIGTH)
         );
     
-    public List<BellNote> loadSong(String filename){
+    private List<BellNote> loadSong(String filename) throws FileNotFoundException{
         // load the song from a file
-        List<BellNote> song = new ArrayList<BellNote>();
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(new File(filename));
-        } catch (FileNotFoundException ex) {
-        }
+        List<BellNote> song = new ArrayList<>();
+        Scanner scanner = new Scanner(new File(filename));
         while(scanner.hasNextLine()){
             String[] note = scanner.nextLine().split(" ");
-            song.add(new BellNote())
+            song.add(new BellNote(toneMap.get(note[0]), lengthMap.get(note[1])));
         }
+        scanner.close();
         return song;
     }
     // Mary had a little lamb
-    private static final List<BellNote> song = new ArrayList<BellNote>() {{
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.F4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
+    
+    // private static final List<BellNote> song = new ArrayList<BellNote>() {{
+    //     add(new BellNote(Note.A5, NoteLength.QUARTER));
+    //     add(new BellNote(Note.G4, NoteLength.QUARTER));
+    //     add(new BellNote(Note.F4, NoteLength.QUARTER));
+    //     add(new BellNote(Note.G4, NoteLength.QUARTER));
 
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.HALF));
+    //     add(new BellNote(Note.A5, NoteLength.QUARTER));
+    //     add(new BellNote(Note.A5, NoteLength.QUARTER));
+    //     add(new BellNote(Note.A5, NoteLength.HALF));
 
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.HALF));
+    //     add(new BellNote(Note.G4, NoteLength.QUARTER));
+    //     add(new BellNote(Note.G4, NoteLength.QUARTER));
+    //     add(new BellNote(Note.G4, NoteLength.HALF));
 
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.HALF));
+    //     add(new BellNote(Note.A5, NoteLength.QUARTER));
+    //     add(new BellNote(Note.A5, NoteLength.QUARTER));
+    //     add(new BellNote(Note.A5, NoteLength.HALF));
 
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.F4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
+    //     add(new BellNote(Note.A5, NoteLength.QUARTER));
+    //     add(new BellNote(Note.G4, NoteLength.QUARTER));
+    //     add(new BellNote(Note.F4, NoteLength.QUARTER));
+    //     add(new BellNote(Note.G4, NoteLength.QUARTER));
 
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
+    //     add(new BellNote(Note.A5, NoteLength.QUARTER));
+    //     add(new BellNote(Note.A5, NoteLength.QUARTER));
+    //     add(new BellNote(Note.A5, NoteLength.QUARTER));
+    //     add(new BellNote(Note.A5, NoteLength.QUARTER));
 
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
-        add(new BellNote(Note.A5, NoteLength.QUARTER));
-        add(new BellNote(Note.G4, NoteLength.QUARTER));
+    //     add(new BellNote(Note.G4, NoteLength.QUARTER));
+    //     add(new BellNote(Note.G4, NoteLength.QUARTER));
+    //     add(new BellNote(Note.A5, NoteLength.QUARTER));
+    //     add(new BellNote(Note.G4, NoteLength.QUARTER));
 
-        add(new BellNote(Note.F4, NoteLength.WHOLE));
-    }};
+    //     add(new BellNote(Note.F4, NoteLength.WHOLE));
+    // }};
 
     public static void main(String[] args) throws Exception {
         final AudioFormat af =
                 new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
         Tone t = new Tone(af);
+        List<BellNote> song = t.loadSong("songs/MaryHadALittleLamb.txt");
         t.playSong(song);
     }
 
@@ -92,7 +97,7 @@ public class Tone {
         this.af = af;
     }
 
-    void playSong(List<BellNote> song) throws LineUnavailableException {
+    public void playSong(List<BellNote> song) throws LineUnavailableException {
         try (final SourceDataLine line = AudioSystem.getSourceDataLine(af)) {
             line.open();
             line.start();

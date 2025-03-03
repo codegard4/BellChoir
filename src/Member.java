@@ -1,5 +1,6 @@
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 public class Member implements Runnable{
@@ -17,13 +18,14 @@ public class Member implements Runnable{
         thread.start();
     }
 
-    public synchronized startBelling(){
+    public synchronized void startBelling() throws LineUnavailableException{
         try (final SourceDataLine line = AudioSystem.getSourceDataLine(audioFormat)) {
             line.open();
             line.start();
-
-            playNote(line, bn);
-            
+            final int ms = Math.min(note.length.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
+            final int length = Note.SAMPLE_RATE * ms / 1000;
+            line.write(note.note.sample(), 0, length);
+            line.write(Note.REST.sample(), 0, 50);
             line.drain();
         }
     }
@@ -41,10 +43,7 @@ public class Member implements Runnable{
     }
 
     private void playNote(SourceDataLine line, BellNote bn) {
-        final int ms = Math.min(bn.length.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
-        final int length = Note.SAMPLE_RATE * ms / 1000;
-        line.write(bn.note.sample(), 0, length);
-        line.write(Note.REST.sample(), 0, 50);
+       
     } */
 
     @Override
