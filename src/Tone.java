@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.LineUnavailableException;
 
 public class Tone {
 
@@ -32,6 +33,7 @@ public class Tone {
 
     /**
      * Loads and creates a list of notes from a specified song file
+     * 
      * @param filename
      * @return
      * @throws FileNotFoundException
@@ -41,8 +43,32 @@ public class Tone {
         List<BellNote> song = new ArrayList<>();
         try (Scanner scanner = new Scanner(new File(filename))) {
             while (scanner.hasNextLine()) {
-                String[] note = scanner.nextLine().split(" ");
-                song.add(new BellNote(toneMap.get(note[0]), lengthMap.get(note[1])));
+
+                // is it separated by spaces?
+                try {
+                    String[] note = scanner.nextLine().split(" ");
+                    // valid line
+                    if (note.length == 2) {
+                        Note n = toneMap.get(note[0]);
+                        NoteLength length = lengthMap.get(note[1]);
+
+                        // we were not given a valid note -- return a null song
+                        if (n == null) {
+                            System.out.println("Invalid Note: " + note[0]);
+                            return null;
+                        }
+
+                        // we were not given a valid length -- return a null song
+                        if (length == null) {
+                            System.out.println("Invalid Note Length: " + note[1]);
+                            return null;
+                        }
+
+                        song.add(new BellNote(n, length));
+                    }
+                } catch (Exception e) {
+                    System.err.println(e);
+                }
             }
         }
         return song;
@@ -70,25 +96,42 @@ public class Tone {
     public static void main(String[] args) throws Exception {
         final AudioFormat af = new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
         Tone t = new Tone(af);
-        List<BellNote> song = t.loadSong("songs/SevenNationArmy.txt");
+        List<BellNote> song = t.loadSong("songs/badsong.txt");
 
         // add the members of the choir!
         // *each member will start with an arbitrary note length which will change
         // throughout the song
-        HashMap<Note, Member> bellChoir = t.recruitChoir();
-        System.out.println(bellChoir);
 
-        for (BellNote bn : song) {
-            Member m = bellChoir.get(bn.note);
-            m.startBelling(bn.length);
-        }
+        t.playSong(song);
 
-        for (Member m : bellChoir.values()) {
-            m.stopBelling();
-        }
+    }
 
-        for (Member m : bellChoir.values()) {
-            m.joinBells();
+    private void playSong(List<BellNote> song) {
+        if (song == null) {
+            System.out.println("Invalid Song");
+        } else {
+            HashMap<Note, Member> bellChoir = recruitChoir();
+            for (BellNote bn : song) {
+
+                Member m = bellChoir.get(bn.note);
+                try {
+                    m.startBelling(bn.length);
+                } catch (LineUnavailableException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for (Member m : bellChoir.values()) {
+                m.stopBelling();
+            }
+
+            for (Member m : bellChoir.values()) {
+                try {
+                    m.joinBells();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
