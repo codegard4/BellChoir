@@ -48,7 +48,7 @@ public class Member implements Runnable{
             final int ms = Math.min(n.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
             final int length = Note.SAMPLE_RATE * ms / 1000;
             line.write(note.sample(), 0, length);
-            line.write(Note.REST.sample(), 0, 10);
+            line.write(Note.REST.sample(), 0, 5);
             line.drain();
         } catch(LineUnavailableException ignore){}
     }

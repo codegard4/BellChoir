@@ -12,6 +12,7 @@ import javax.sound.sampled.SourceDataLine;
 
 public class Tone {
 
+    // List of all of the bell notes in the song
     private BellNote[] allNotes = new BellNote[] {
             new BellNote(Note.A4, NoteLength.QUARTER),new BellNote(Note.A4S, NoteLength.QUARTER),
             new BellNote(Note.B4, NoteLength.QUARTER),new BellNote(Note.C4, NoteLength.QUARTER),
@@ -21,11 +22,14 @@ public class Tone {
             new BellNote(Note.G4, NoteLength.QUARTER),new BellNote(Note.G4S, NoteLength.QUARTER),
             new BellNote(Note.A5, NoteLength.QUARTER),new BellNote(Note.REST, NoteLength.QUARTER)
     };
+
+    // arbitrary names that do not affect the functionality of the program
     private String[] names = new String[] {
-            "Ted", "Shaun", "Andrew", "Abe", "Charlie", "Jack", "Molly", "Murat", "Justin", "Nate", "Fuzzy", "Pink",
-            "Bunny", "Slippers"
+            "Ted", "Shaun", "Murat", "Molly", "Charlie", "Jack", "Abe", "Andrew", "Justin", "Fuzzy", "Nate", "Pink",
+            "Cole", "Slippers"
     };
 
+    // map of the tones that we create from a song file
     private Map<String, Note> toneMap = Map.ofEntries(
             Map.entry("A4", Note.A4),Map.entry("A4S", Note.A4S),
             Map.entry("B4", Note.B4),Map.entry("C4", Note.C4),
@@ -35,10 +39,17 @@ public class Tone {
             Map.entry("G4", Note.G4),Map.entry("G4S", Note.G4S),
             Map.entry("A5", Note.A5),Map.entry("REST", Note.REST));
 
+    // map of the lengths that we create from a song file
     private Map<String, NoteLength> lengthMap = Map.ofEntries(
             Map.entry("1", NoteLength.WHOLE),Map.entry("2", NoteLength.HALF),
             Map.entry("4", NoteLength.QUARTER),Map.entry("8", NoteLength.EIGTH));
 
+    /**
+     * Loads and creates a list of notes from a specified song file
+     * @param filename
+     * @return
+     * @throws FileNotFoundException
+     */
     private List<BellNote> loadSong(String filename) throws FileNotFoundException {
         // load the song from a file
         List<BellNote> song = new ArrayList<>();
@@ -51,13 +62,20 @@ public class Tone {
         return song;
     }
 
+    /**
+     * Recruits members of the choir by adding them to a hash map
+     * When we want to play a song we will get the note of the member and have them play
+     * @return
+     */
     private HashMap<Note, Member> recruitChoir() {
+        // save choir members in a hash map
         HashMap<Note, Member> bellChoir = new HashMap<>();
+        int nameIndex = 0;
+        // for each tone that could be played, make a member to play it!
         for (String key : toneMap.keySet()) {
-            bellChoir.put(toneMap.get(key), new Member("Name", toneMap.get(key), af));
+            bellChoir.put(toneMap.get(key), new Member(names[nameIndex], toneMap.get(key), af));
+            nameIndex++;
         }
-            
-        
         return bellChoir;
     }
 
@@ -65,8 +83,6 @@ public class Tone {
         final AudioFormat af = new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
         Tone t = new Tone(af);
         List<BellNote> song = t.loadSong("songs/SevenNationArmy.txt");
-        // t.playSong(song);
-
         // add the members of the choir!
         // *each member will start with an arbitrary note length which will change
         // throughout the song
@@ -78,13 +94,14 @@ public class Tone {
             Member m = bellChoir.get(bn.note);
             m.startBelling(bn.length);
         }
+
         for (Member m : bellChoir.values()) {
             m.stopBelling();
         }
+
         for (Member m : bellChoir.values()) {
             m.joinBells();
         }
-
     }
 
     private final AudioFormat af;
