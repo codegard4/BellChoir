@@ -74,66 +74,67 @@ public class Tone {
         return song;
     }
 
-    /**
-     * Recruits members of the choir by adding them to a hash map
-     * When we want to play a song we will get the note of the member and have them
-     * play
-     * 
-     * @return
-     */
-    private HashMap<Note, Member> recruitChoir() {
-        // save choir members in a hash map
-        HashMap<Note, Member> bellChoir = new HashMap<>();
-        int nameIndex = 0;
-        // for each tone that could be played, make a member to play it!
-        for (String key : toneMap.keySet()) {
-            bellChoir.put(toneMap.get(key), new Member(names[nameIndex], toneMap.get(key), af));
-            nameIndex++;
-        }
-        return bellChoir;
-    }
+//    /**
+//     * Recruits members of the choir by adding them to a hash map
+//     * When we want to play a song we will get the note of the member and have them
+//     * play
+//     *
+//     * @return
+//     */
+//    private HashMap<Note, Member> recruitChoir() {
+//        // save choir members in a hash map
+//        HashMap<Note, Member> bellChoir = new HashMap<>();
+//        int nameIndex = 0;
+//        // for each tone that could be played, make a member to play it!
+//        for (String key : toneMap.keySet()) {
+//            bellChoir.put(toneMap.get(key), new Member(names[nameIndex], toneMap.get(key), af));
+//            nameIndex++;
+//        }
+//        return bellChoir;
+//    }
 
     public static void main(String[] args) throws Exception {
         final AudioFormat af = new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
+
         Tone t = new Tone(af);
-        List<BellNote> song = t.loadSong("songs/badsong.txt");
-
-        // add the members of the choir!
-        // *each member will start with an arbitrary note length which will change
-        // throughout the song
-
-        t.playSong(song);
+        List<BellNote> sna = t.loadSong("songs/SevenNationArmy.txt");
+        List<BellNote> mhall = t.loadSong("songs/MaryHadALittleLamb.txt");
+//        t.playSong(song);
+        Conductor c = new Conductor(sna, af);
+        c.playSong();
+        c.changeSong(mhall);
+        c.playSong();
 
     }
-
-    private void playSong(List<BellNote> song) {
-        if (song == null) {
-            System.out.println("Invalid Song");
-        } else {
-            HashMap<Note, Member> bellChoir = recruitChoir();
-            for (BellNote bn : song) {
-
-                Member m = bellChoir.get(bn.note);
-                try {
-                    m.startBelling(bn.length);
-                } catch (LineUnavailableException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            for (Member m : bellChoir.values()) {
-                m.stopBelling();
-            }
-
-            for (Member m : bellChoir.values()) {
-                try {
-                    m.joinBells();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+//
+//    private void playSong(List<BellNote> song) {
+//        if (song == null) {
+//            System.out.println("Invalid Song");
+//        } else {
+//            HashMap<Note, Member> bellChoir = recruitChoir();
+//            for (BellNote bn : song) {
+//
+//                Member m = bellChoir.get(bn.note);
+//                try {
+//                    m.startBelling(bn.length);
+//                } catch (LineUnavailableException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            for (Member m : bellChoir.values()) {
+//                m.stopBelling();
+//            }
+//
+//            for (Member m : bellChoir.values()) {
+//                try {
+//                    m.joinBells();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 
     private final AudioFormat af;
 
