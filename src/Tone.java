@@ -1,17 +1,15 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.LineUnavailableException;
 
 public class Tone {
 
     // arbitrary names that do not affect the functionality of the program
-    private final String[] names = new String[] {
+    private final String[] names = new String[]{
             "Ted", "Shaun", "Murat", "Molly", "Charlie", "Jack", "Abe", "Andrew", "Justin", "Fuzzy", "Nate", "Pink",
             "Cole", "Slippers"
     };
@@ -33,12 +31,15 @@ public class Tone {
 
     /**
      * Loads and creates a list of notes from a specified song file
-     * 
-     * @param filename
-     * @return
-     * @throws FileNotFoundException
+     *
+     * @param filename the name of the song file to load
+     * @return the loaded song
      */
     private List<BellNote> loadSong(String filename) throws FileNotFoundException {
+
+        // print all of the errors we encounter -- if it is invalid in any way then don't return the song
+        boolean invalidSong = false;
+
         // load the song from a file
         List<BellNote> song = new ArrayList<>();
         try (Scanner scanner = new Scanner(new File(filename))) {
@@ -47,6 +48,7 @@ public class Tone {
                 // is it separated by spaces?
                 try {
                     String[] note = scanner.nextLine().split(" ");
+
                     // valid line
                     if (note.length == 2) {
                         Note n = toneMap.get(note[0]);
@@ -55,86 +57,48 @@ public class Tone {
                         // we were not given a valid note -- return a null song
                         if (n == null) {
                             System.out.println("Invalid Note: " + note[0]);
-                            return null;
+                            invalidSong = true;
                         }
 
                         // we were not given a valid length -- return a null song
                         if (length == null) {
                             System.out.println("Invalid Note Length: " + note[1]);
-                            return null;
+                            invalidSong = true;
                         }
 
                         song.add(new BellNote(n, length));
+                    } else {
+                        System.err.println("Invalid Line -- lines should contain two values (Note NoteLength) separated by space");
+                        invalidSong = true;
                     }
                 } catch (Exception e) {
+                    invalidSong = true;
                     System.err.println(e);
                 }
             }
         }
+        // there was 1+ errors -- this is an invalid song
+        if (invalidSong) {
+            return null;
+        }
+        System.out.println(filename + " is a valid song file");
         return song;
     }
-
-//    /**
-//     * Recruits members of the choir by adding them to a hash map
-//     * When we want to play a song we will get the note of the member and have them
-//     * play
-//     *
-//     * @return
-//     */
-//    private HashMap<Note, Member> recruitChoir() {
-//        // save choir members in a hash map
-//        HashMap<Note, Member> bellChoir = new HashMap<>();
-//        int nameIndex = 0;
-//        // for each tone that could be played, make a member to play it!
-//        for (String key : toneMap.keySet()) {
-//            bellChoir.put(toneMap.get(key), new Member(names[nameIndex], toneMap.get(key), af));
-//            nameIndex++;
-//        }
-//        return bellChoir;
-//    }
 
     public static void main(String[] args) throws Exception {
         final AudioFormat af = new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
 
         Tone t = new Tone(af);
-        List<BellNote> sna = t.loadSong("songs/SevenNationArmy.txt");
-        List<BellNote> mhall = t.loadSong("songs/MaryHadALittleLamb.txt");
-//        t.playSong(song);
-        Conductor c = new Conductor(sna, af);
+        List<BellNote> seven = t.loadSong("songs/SevenNationArmy.txt");
+        List<BellNote> mary = t.loadSong("songs/MaryHadALittleLamb.txt");
+        List<BellNote> invalid = t.loadSong("songs/badsong.txt");
+        Conductor c = new Conductor(invalid, af);
+        c.changeSong(seven);
         c.playSong();
-        c.changeSong(mhall);
+        c.changeSong(mary);
         c.playSong();
 
     }
-//
-//    private void playSong(List<BellNote> song) {
-//        if (song == null) {
-//            System.out.println("Invalid Song");
-//        } else {
-//            HashMap<Note, Member> bellChoir = recruitChoir();
-//            for (BellNote bn : song) {
-//
-//                Member m = bellChoir.get(bn.note);
-//                try {
-//                    m.startBelling(bn.length);
-//                } catch (LineUnavailableException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            for (Member m : bellChoir.values()) {
-//                m.stopBelling();
-//            }
-//
-//            for (Member m : bellChoir.values()) {
-//                try {
-//                    m.joinBells();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//    }
 
     private final AudioFormat af;
 

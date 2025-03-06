@@ -1,12 +1,12 @@
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.LineUnavailableException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A conductor controls members of the bell choir, telling them when they should start and stop belling
+ */
 public class Conductor {
-
-
 
     // arbitrary names that do not affect the functionality of the program
     private final String[] names = new String[]{
@@ -24,41 +24,47 @@ public class Conductor {
             Map.entry("G4", Note.G4), Map.entry("G4S", Note.G4S),
             Map.entry("A5", Note.A5), Map.entry("REST", Note.REST));
 
+    // save the audio format -- that will not change across songs
     private final AudioFormat af;
+
+    // save the current song but allow the conductor to play different songs
     private List<BellNote> song;
+
+    // keep track of the choir
     private HashMap<Note, Member> choir;
 
+    /**
+     * A conductor has a song and audio format provided initially then recruits their choir
+     *
+     * @param song the first song to play
+     * @param af the audio format to play all songs with
+     */
     public Conductor(List<BellNote> song, AudioFormat af) {
         this.song = song;
         this.af = af;
         recruitChoir();
     }
 
+    /**
+     * Play a song -- tell the member to use their bell when it is their turn
+     */
     public void playSong() {
         if (song == null) {
             System.out.println("Invalid Song");
         } else {
 
+            // play each note in the song one member belling at a time
             for (BellNote bn : song) {
-
                 Member m = choir.get(bn.note);
-                try {
-                    m.startBelling(bn.length);
-                } catch (LineUnavailableException e) {
-                    e.printStackTrace();
-                }
-            }
 
-            for (Member m : choir.values()) {
+                // start the thread
+                m.startBelling(bn.length);
+
+                // ok thats enough outta you! next guy (stop the thread)
                 m.stopBelling();
             }
-
             for (Member m : choir.values()) {
-                try {
-                    m.joinBells();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                m.joinBells();
             }
         }
     }
@@ -67,21 +73,26 @@ public class Conductor {
      * Recruits members of the choir by adding them to a hash map
      * When we want to play a song we will get the note of the member and have them
      * play
-     *
-     * @return
      */
     private void recruitChoir() {
+
         // save choir members in a hash map
         choir = new HashMap<>();
         int nameIndex = 0;
-        // for each tone that could be played, make a member to play it!
+
+        // for each tone that could be played, get a member to play it!
         for (String key : toneMap.keySet()) {
             choir.put(toneMap.get(key), new Member(names[nameIndex], toneMap.get(key), af));
             nameIndex++;
         }
+        System.out.println("Choir recruited!");
     }
 
-    public void changeSong(List<BellNote> song){
+    /**
+     * Changes the song -- allows a conductor and choir to play multiple songs
+     * @param song new song to be played
+     */
+    public void changeSong(List<BellNote> song) {
         this.song = song;
     }
 
