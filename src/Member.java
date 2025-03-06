@@ -8,26 +8,25 @@ import javax.sound.sampled.SourceDataLine;
  * Members have one bell that they can either play or not play
  * Members play the bell one at a time, so each member's thread is synchronized,
  * meaning when one member plays it will continue to play its' note until it is
- * done
- * then the next member will start playing
+ * done then the next member will start playing
  */
 public class Member implements Runnable {
     // takes and plays 1 or 2 notes
     private String name = ""; // adds no functionality -- but I think players should have names
     private final Note note; // one note in their left hand
-    private NoteLength noteLength;
-    private final Thread thread;
-    private final AudioFormat audioFormat;
-    public volatile boolean running;
+    private NoteLength noteLength; // how long should we play this note for
+    private final Thread thread; // the member's thread
+    private final AudioFormat audioFormat; // the audio format to use
+    public volatile boolean running; // is the member "belling"?
 
     /**
      * Constructs a member, with a name, note and the choir's audio format
      * *Note that a member's bell note contains an arbitrary note duration, but the
      * duration will change throughout the song
      *
-     * @param name
-     * @param note
-     * @param audioFormat
+     * @param name member's name
+     * @param note member's bell they will play throughout the song(s)
+     * @param audioFormat the audio format for the note to be played with
      */
     public Member(String name, Note note, AudioFormat audioFormat) {
         this.name = name;
@@ -60,7 +59,7 @@ public class Member implements Runnable {
      * Stops playing the note
      */
     public void stopBelling() {
-        System.out.println("My moment of glory is over .. :/");
+//        System.out.println("My moment of glory is over .. :/");
         running = false;
         thread.interrupt();
     }
@@ -81,12 +80,11 @@ public class Member implements Runnable {
      */
     @Override
     public synchronized void run() {
-        if (hasNote() && hasNoteLength()) {
+        if (hasNote()) {
             System.out.println("Mom I got a bell!!! " + name + " GOT A BELLLLLLL!!! ");
         } else {
             System.out.println(name + " is not good enough yet to get a bell");
         }
-
     }
 
     /**
@@ -99,6 +97,8 @@ public class Member implements Runnable {
     }
 
     /**
+     * Check if a member has a note length to play its note for
+     *
      * @return whether the conductor told us how long to play for
      */
     public boolean hasNoteLength() {

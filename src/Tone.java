@@ -6,13 +6,10 @@ import java.util.Map;
 import java.util.Scanner;
 import javax.sound.sampled.AudioFormat;
 
+/**
+ * A tone takes an audio format
+ */
 public class Tone {
-
-    // arbitrary names that do not affect the functionality of the program
-    private final String[] names = new String[]{
-            "Ted", "Shaun", "Murat", "Molly", "Charlie", "Jack", "Abe", "Andrew", "Justin", "Fuzzy", "Nate", "Pink",
-            "Cole", "Slippers"
-    };
 
     // map of the tones that we create from a song file
     private final Map<String, Note> toneMap = Map.ofEntries(
@@ -27,7 +24,10 @@ public class Tone {
     // map of the lengths that we create from a song file
     private final Map<String, NoteLength> lengthMap = Map.ofEntries(
             Map.entry("1", NoteLength.WHOLE), Map.entry("2", NoteLength.HALF),
-            Map.entry("4", NoteLength.QUARTER), Map.entry("8", NoteLength.EIGTH));
+            Map.entry("4", NoteLength.QUARTER), Map.entry("8", NoteLength.EIGHTH));
+
+    // the tone's audio format
+    private final AudioFormat af;
 
     /**
      * Loads and creates a list of notes from a specified song file
@@ -35,7 +35,7 @@ public class Tone {
      * @param filename the name of the song file to load
      * @return the loaded song
      */
-    private List<BellNote> loadSong(String filename) throws FileNotFoundException {
+    public List<BellNote> loadSong(String filename) throws FileNotFoundException {
 
         // print all of the errors we encounter -- if it is invalid in any way then don't return the song
         boolean invalidSong = false;
@@ -56,13 +56,13 @@ public class Tone {
 
                         // we were not given a valid note -- return a null song
                         if (n == null) {
-                            System.out.println("Invalid Note: " + note[0]);
+                            System.err.println("Invalid Note: " + note[0]);
                             invalidSong = true;
                         }
 
                         // we were not given a valid length -- return a null song
                         if (length == null) {
-                            System.out.println("Invalid Note Length: " + note[1]);
+                            System.err.println("Invalid Note Length: " + note[1]);
                             invalidSong = true;
                         }
 
@@ -77,6 +77,7 @@ public class Tone {
                 }
             }
         }
+
         // there was 1+ errors -- this is an invalid song
         if (invalidSong) {
             return null;
@@ -85,32 +86,28 @@ public class Tone {
         return song;
     }
 
-    public static void main(String[] args) throws Exception {
-        final AudioFormat af = new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
-
-        Tone t = new Tone(af);
-        List<BellNote> seven = t.loadSong("songs/SevenNationArmy.txt");
-        List<BellNote> mary = t.loadSong("songs/MaryHadALittleLamb.txt");
-        List<BellNote> invalid = t.loadSong("songs/badsong.txt");
-        Conductor c = new Conductor(invalid, af);
-        c.changeSong(seven);
-        c.playSong();
-        c.changeSong(mary);
-        c.playSong();
-
-    }
-
-    private final AudioFormat af;
-
+    /**
+     * The tone of the note depends on our audio format
+     * @param af audioFormat of the note
+     */
     Tone(AudioFormat af) {
         this.af = af;
     }
 }
 
+/**
+ * A bell note has a note and the length to play the note for
+ */
 class BellNote {
     final Note note;
     final NoteLength length;
 
+    /**
+     * Create a bell note
+     *
+     * @param note   the note to play
+     * @param length how long to play the note
+     */
     BellNote(Note note, NoteLength length) {
         this.note = note;
         this.length = length;
@@ -122,23 +119,37 @@ class BellNote {
     }
 }
 
+/**
+ * Valid NoteLengths are whole, half, quarter and eighth
+ */
 enum NoteLength {
     WHOLE(1.0f),
     HALF(0.5f),
     QUARTER(0.25f),
-    EIGTH(0.125f);
+    EIGHTH(0.125f);
 
     private final int timeMs;
 
-    private NoteLength(float length) {
+    /**
+     * How long should we play the note for?
+     * @param length the length of the note to be played
+     */
+    NoteLength(float length) {
         timeMs = (int) (length * Note.MEASURE_LENGTH_SEC * 1000);
     }
 
+    /**
+     * Returns the time of the note to be played in milliseconds
+     * @return time
+     */
     public int timeMs() {
         return timeMs;
     }
 }
 
+/**
+ * These are all the valid notes we can play and what audio output they correspond to
+ */
 enum Note {
     // REST Must be the first 'Note'
     REST,
@@ -167,7 +178,10 @@ enum Note {
 
     private final byte[] sinSample = new byte[MEASURE_LENGTH_SEC * SAMPLE_RATE];
 
-    private Note() {
+    /**
+     * Do fancy math to create the note's tone
+     */
+    Note() {
         int n = this.ordinal();
         if (n > 0) {
             // Calculate the frequency!
@@ -183,6 +197,10 @@ enum Note {
         }
     }
 
+    /**
+     * Returns a sample of the note
+     * @return byte array of the note
+     */
     public byte[] sample() {
         return sinSample;
     }

@@ -8,6 +8,20 @@ import java.util.Map;
  */
 public class Conductor {
 
+    public static void main(String[] args) throws Exception {
+        final AudioFormat af = new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
+
+        Tone t = new Tone(af);
+        List<BellNote> seven = t.loadSong("songs/SevenNationArmy.txt");
+        List<BellNote> mary = t.loadSong("songs/MaryHadALittleLamb.txt");
+        List<BellNote> invalid = t.loadSong("songs/badsong.txt");
+        Conductor c = new Conductor(invalid, af);
+        c.changeSong(seven);
+        c.playSong();
+        c.changeSong(mary);
+        c.playSong();
+    }
+
     // arbitrary names that do not affect the functionality of the program
     private final String[] names = new String[]{
             "Ted", "Shaun", "Murat", "Molly", "Charlie", "Jack", "Abe", "Andrew", "Justin", "Fuzzy", "Nate", "Pink",
