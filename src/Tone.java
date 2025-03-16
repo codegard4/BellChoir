@@ -37,7 +37,7 @@ public class Tone {
      */
     public List<BellNote> loadSong(String filename) throws FileNotFoundException {
 
-        // print all of the errors we encounter -- if it is invalid in any way then don't return the song
+        // print all the errors we encounter -- if it is invalid in any way then don't return the song
         boolean invalidSong = false;
 
         // load the song from a file

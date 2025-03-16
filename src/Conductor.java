@@ -14,11 +14,11 @@ public class Conductor {
         Tone t = new Tone(af);
         List<BellNote> seven = t.loadSong("songs/SevenNationArmy.txt");
         List<BellNote> mary = t.loadSong("songs/MaryHadALittleLamb.txt");
-        List<BellNote> invalid = t.loadSong("songs/badsong.txt");
+        List<BellNote> invalid = t.loadSong("songs/badsong.txt"); // won't work -- invalid note, space and line
         Conductor c = new Conductor(invalid, af);
-        c.changeSong(seven);
+        c.changeSong(seven); // plays seven nation army
         c.playSong();
-        c.changeSong(mary);
+        c.changeSong(mary); // plays mary had a little lamb
         c.playSong();
     }
 

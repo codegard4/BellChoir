@@ -11,9 +11,9 @@ import javax.sound.sampled.SourceDataLine;
  * done then the next member will start playing
  */
 public class Member implements Runnable {
-    // takes and plays 1 or 2 notes
+    // takes and plays 1 note
     private String name = ""; // adds no functionality -- but I think players should have names
-    private final Note note; // one note in their left hand
+    private final Note note; // one note (bell) in their hand
     private NoteLength noteLength; // how long should we play this note for
     private final Thread thread; // the member's thread
     private final AudioFormat audioFormat; // the audio format to use

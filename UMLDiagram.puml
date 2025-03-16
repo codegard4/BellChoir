@@ -1,0 +1,82 @@
+@startuml
+
+skinparam classAttributeIconSize 10
+
+class Tone {
+    - toneMap: Map<String, Note>
+    - lengthMap: Map<String, NoteLength>
+    - af: AudioFormat
+    + Tone(af: AudioFormat)
+    + loadSong(filename: String): List<BellNote>
+}
+
+class BellNote {
+    - note: Note
+    - length: NoteLength
+    + BellNote(note: Note, length: NoteLength)
+    + toString(): String
+}
+
+enum NoteLength {
+    WHOLE
+    HALF
+    QUARTER
+    EIGHTH
+    + timeMs(): int
+}
+
+enum Note {
+    REST
+    A4
+    A4S
+    B4
+    C4
+    C4S
+    D4
+    D4S
+    E4
+    F4
+    F4S
+    G4
+    G4S
+    A5
+    + sample(): byte[]
+}
+
+class Member {
+    - name: String
+    - note: Note
+    - noteLength: NoteLength
+    - thread: Thread
+    - audioFormat: AudioFormat
+    - running: boolean
+    + Member(name: String, note: Note, audioFormat: AudioFormat)
+    + startBelling(n: NoteLength): void
+    + stopBelling(): void
+    + joinBells(): void
+    + run(): void
+    + hasNote(): boolean
+    + hasNoteLength(): boolean
+}
+
+class Conductor {
+    - names: String[]
+    - toneMap: Map<String, Note>
+    - af: AudioFormat
+    - song: List<BellNote>
+    - choir: HashMap<Note, Member>
+    + Conductor(song: List<BellNote>, af: AudioFormat)
+    + playSong(): void
+    + recruitChoir(): void
+    + changeSong(song: List<BellNote>): void
+}
+
+Tone "1" --> "*" BellNote : loads
+BellNote "1" --> "1" Note : uses
+BellNote "1" --> "1" NoteLength : has
+Member "1" --> "1" Note : plays
+Member "1" --> "1" NoteLength : follows
+Conductor "1" --> "*" Member : manages
+Conductor "1" --> "*" BellNote : conducts
+
+@enduml
