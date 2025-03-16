@@ -88,6 +88,7 @@ public class Tone {
 
     /**
      * The tone of the note depends on our audio format
+     *
      * @param af audioFormat of the note
      */
     Tone(AudioFormat af) {
@@ -132,6 +133,7 @@ enum NoteLength {
 
     /**
      * How long should we play the note for?
+     *
      * @param length the length of the note to be played
      */
     NoteLength(float length) {
@@ -140,6 +142,7 @@ enum NoteLength {
 
     /**
      * Returns the time of the note to be played in milliseconds
+     *
      * @return time
      */
     public int timeMs() {
@@ -199,6 +202,7 @@ enum Note {
 
     /**
      * Returns a sample of the note
+     *
      * @return byte array of the note
      */
     public byte[] sample() {

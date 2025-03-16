@@ -24,8 +24,8 @@ public class Conductor {
 
     // arbitrary names that do not affect the functionality of the program
     private final String[] names = new String[]{
-            "Ted", "Shaun", "Murat", "Molly", "Charlie", "Jack", "Abe", "Andrew", "Justin", "Fuzzy", "Nate", "Pink",
-            "Cole", "Slippers"
+            "Ted", "Shaun", "Murat", "Molly", "Charlie", "Jack", "Abe", "Andrew", "Justin", "Kelly", "Nate", "Christi",
+            "Cole", "Nick"
     };
 
     // map of the tones that we create from a song file
@@ -51,7 +51,7 @@ public class Conductor {
      * A conductor has a song and audio format provided initially then recruits their choir
      *
      * @param song the first song to play
-     * @param af the audio format to play all songs with
+     * @param af   the audio format to play all songs with
      */
     public Conductor(List<BellNote> song, AudioFormat af) {
         this.song = song;
@@ -104,6 +104,7 @@ public class Conductor {
 
     /**
      * Changes the song -- allows a conductor and choir to play multiple songs
+     *
      * @param song new song to be played
      */
     public void changeSong(List<BellNote> song) {

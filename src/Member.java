@@ -24,8 +24,8 @@ public class Member implements Runnable {
      * *Note that a member's bell note contains an arbitrary note duration, but the
      * duration will change throughout the song
      *
-     * @param name member's name
-     * @param note member's bell they will play throughout the song(s)
+     * @param name        member's name
+     * @param note        member's bell they will play throughout the song(s)
      * @param audioFormat the audio format for the note to be played with
      */
     public Member(String name, Note note, AudioFormat audioFormat) {
