@@ -37,7 +37,8 @@ public class Tone {
      */
     public List<BellNote> loadSong(String filename) throws FileNotFoundException {
 
-        // print all the errors we encounter -- if it is invalid in any way then don't return the song
+        // print all the errors we encounter -- if it is invalid in any way then don't
+        // return the song
         boolean invalidSong = false;
 
         // load the song from a file
@@ -68,7 +69,8 @@ public class Tone {
 
                         song.add(new BellNote(n, length));
                     } else {
-                        System.err.println("Invalid Line -- lines should contain two values (Note NoteLength) separated by space");
+                        System.err.println(
+                                "Invalid Line -- lines should contain two values (Note NoteLength) separated by space");
                         invalidSong = true;
                     }
                 } catch (Exception e) {
@@ -151,7 +153,8 @@ enum NoteLength {
 }
 
 /**
- * These are all the valid notes we can play and what audio output they correspond to
+ * These are all the valid notes we can play and what audio output they
+ * correspond to
  */
 enum Note {
     // REST Must be the first 'Note'

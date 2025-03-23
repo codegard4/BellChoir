@@ -1,6 +1,3 @@
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 /**
@@ -16,8 +13,8 @@ public class Member implements Runnable {
     private final Note note; // one note (bell) in their hand
     private NoteLength noteLength; // how long should we play this note for
     private final Thread thread; // the member's thread
-    private final AudioFormat audioFormat; // the audio format to use
     public volatile boolean running; // is the member "belling"?
+    // public SourceDataLine line;
 
     /**
      * Constructs a member, with a name, note and the choir's audio format
@@ -26,32 +23,29 @@ public class Member implements Runnable {
      *
      * @param name        member's name
      * @param note        member's bell they will play throughout the song(s)
-     * @param audioFormat the audio format for the note to be played with
      */
-    public Member(String name, Note note, AudioFormat audioFormat) {
+    public Member(String name, Note note) {
         this.name = name;
         this.note = note;
         this.noteLength = null;
         this.thread = new Thread(this, name);
-        this.audioFormat = audioFormat;
     }
 
+    public void startBelling(){
+        thread.start();
+    }
     /**
      * Plays the Member's note for the specified duration
+     * @param n
+     * @param line
      */
-    public synchronized void startBelling(NoteLength n) {
-        System.out.println(name + " on the...er... bells: " + note);
+    public void bellTime(NoteLength n, SourceDataLine line) {
+        System.out.println(name + " on the... bells: " + note);
         this.noteLength = n;
-        try (final SourceDataLine line = AudioSystem.getSourceDataLine(audioFormat)) {
-            line.open();
-            line.start();
             final int ms = Math.min(noteLength.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
             final int length = Note.SAMPLE_RATE * ms / 1000;
             line.write(note.sample(), 0, length);
             line.write(Note.REST.sample(), 0, 5);
-            line.drain();
-        } catch (LineUnavailableException ignore) {
-        }
     }
 
 
@@ -61,7 +55,7 @@ public class Member implements Runnable {
     public void stopBelling() {
 //        System.out.println("My moment of glory is over .. :/");
         running = false;
-        thread.interrupt();
+        // thread.interrupt();
     }
 
     /**
@@ -79,30 +73,6 @@ public class Member implements Runnable {
      * Runs the thread which will play the member's note
      */
     @Override
-    public synchronized void run() {
-        if (hasNote()) {
-            System.out.println("Mom I got a bell!!! " + name + " GOT A BELLLLLLL!!! ");
-        } else {
-            System.out.println(name + " is not good enough yet to get a bell");
-        }
+    public void run() {
     }
-
-    /**
-     * Check if the member has been given a bell to play!
-     *
-     * @return whether this member has a note
-     */
-    public boolean hasNote() {
-        return note != null;
-    }
-
-    /**
-     * Check if a member has a note length to play its note for
-     *
-     * @return whether the conductor told us how long to play for
-     */
-    public boolean hasNoteLength() {
-        return noteLength != null;
-    }
-
 }

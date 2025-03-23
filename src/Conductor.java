@@ -1,10 +1,14 @@
-import javax.sound.sampled.AudioFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 
 /**
- * A conductor controls members of the bell choir, telling them when they should start and stop belling
+ * A conductor controls members of the bell choir, telling them when they should
+ * start and stop belling
  */
 public class Conductor {
 
@@ -23,7 +27,7 @@ public class Conductor {
     }
 
     // arbitrary names that do not affect the functionality of the program
-    private final String[] names = new String[]{
+    private final String[] names = new String[] {
             "Ted", "Shaun", "Murat", "Molly", "Charlie", "Jack", "Abe", "Andrew", "Justin", "Kelly", "Nate", "Christi",
             "Cole", "Nick"
     };
@@ -48,7 +52,8 @@ public class Conductor {
     private HashMap<Note, Member> choir;
 
     /**
-     * A conductor has a song and audio format provided initially then recruits their choir
+     * A conductor has a song and audio format provided initially then recruits
+     * their choir
      *
      * @param song the first song to play
      * @param af   the audio format to play all songs with
@@ -66,19 +71,27 @@ public class Conductor {
         if (song == null) {
             System.out.println("Invalid Song");
         } else {
+            try (final SourceDataLine line = AudioSystem.getSourceDataLine(af)) {
+                line.open();
+                line.start();
+                for (Member m : choir.values()) {
+                    m.startBelling();
+                }
+                // play each note in the song one member belling at a time
+                for (BellNote bn : song) {
+                    Member m = choir.get(bn.note);
+                    synchronized (m) {
+                        m.bellTime(bn.length, line);
 
-            // play each note in the song one member belling at a time
-            for (BellNote bn : song) {
-                Member m = choir.get(bn.note);
+                    }
+                }
+                for (Member m : choir.values()) {
+                    m.stopBelling();
+                    m.joinBells();
+                }
 
-                // start the thread
-                m.startBelling(bn.length);
-
-                // ok thats enough outta you! next guy (stop the thread)
-                m.stopBelling();
-            }
-            for (Member m : choir.values()) {
-                m.joinBells();
+                line.drain();
+            } catch (LineUnavailableException ignore) {
             }
         }
     }
@@ -96,7 +109,7 @@ public class Conductor {
 
         // for each tone that could be played, get a member to play it!
         for (String key : toneMap.keySet()) {
-            choir.put(toneMap.get(key), new Member(names[nameIndex], toneMap.get(key), af));
+            choir.put(toneMap.get(key), new Member(names[nameIndex], toneMap.get(key)));
             nameIndex++;
         }
         System.out.println("Choir recruited!");
