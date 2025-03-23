@@ -14,15 +14,14 @@ public class Member implements Runnable {
     private NoteLength noteLength; // how long should we play this note for
     private final Thread thread; // the member's thread
     public volatile boolean running; // is the member "belling"?
-    // public SourceDataLine line;
 
     /**
      * Constructs a member, with a name, note and the choir's audio format
      * *Note that a member's bell note contains an arbitrary note duration, but the
      * duration will change throughout the song
      *
-     * @param name        member's name
-     * @param note        member's bell they will play throughout the song(s)
+     * @param name member's name
+     * @param note member's bell they will play throughout the song(s)
      */
     public Member(String name, Note note) {
         this.name = name;
@@ -31,31 +30,30 @@ public class Member implements Runnable {
         this.thread = new Thread(this, name);
     }
 
-    public void startBelling(){
+    public void startBelling() {
         thread.start();
     }
+
     /**
      * Plays the Member's note for the specified duration
+     * 
      * @param n
      * @param line
      */
     public void bellTime(NoteLength n, SourceDataLine line) {
         System.out.println(name + " on the... bells: " + note);
         this.noteLength = n;
-            final int ms = Math.min(noteLength.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
-            final int length = Note.SAMPLE_RATE * ms / 1000;
-            line.write(note.sample(), 0, length);
-            line.write(Note.REST.sample(), 0, 5);
+        final int ms = Math.min(noteLength.timeMs(), Note.MEASURE_LENGTH_SEC * 1000);
+        final int length = Note.SAMPLE_RATE * ms / 1000;
+        line.write(note.sample(), 0, length);
+        line.write(Note.REST.sample(), 0, 5);
     }
-
 
     /**
      * Stops playing the note
      */
     public void stopBelling() {
-//        System.out.println("My moment of glory is over .. :/");
         running = false;
-        // thread.interrupt();
     }
 
     /**

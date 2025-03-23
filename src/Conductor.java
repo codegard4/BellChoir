@@ -14,15 +14,13 @@ public class Conductor {
 
     public static void main(String[] args) throws Exception {
         final AudioFormat af = new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
-
         Tone t = new Tone(af);
-        List<BellNote> seven = t.loadSong("songs/SevenNationArmy.txt");
-        List<BellNote> mary = t.loadSong("songs/MaryHadALittleLamb.txt");
-        List<BellNote> invalid = t.loadSong("songs/badsong.txt"); // won't work -- invalid note, space and line
-        Conductor c = new Conductor(invalid, af);
-        c.changeSong(seven); // plays seven nation army
-        c.playSong();
-        c.changeSong(mary); // plays mary had a little lamb
+        List<BellNote> song = null;
+        if (args != null && args.length > 0) {
+            song = t.loadSong(args[0]);
+        }
+        // -Dsong="SevenNationArmy.txt" #for seven nation army
+        Conductor c = new Conductor(song, af);
         c.playSong();
     }
 

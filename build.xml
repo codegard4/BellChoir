@@ -2,6 +2,8 @@
     <!-- Set global properties -->
     <property name="src.dir" value="src"/>
     <property name="build.dir" value="bin"/>
+    <property name="songs.dir" value="songs" />
+    <property name="song" value="MaryHadALittleLamb.txt" />
     <!-- Clean previous build -->
     <target name="clean">
         <delete dir="${build.dir}"/>
@@ -19,6 +21,7 @@
             <classpath>
                 <pathelement location="${build.dir}"/>
             </classpath>
+            <arg value="${songs.dir}/${song}" />
         </java>
     </target>
 </project>
